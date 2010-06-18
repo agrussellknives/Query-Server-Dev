@@ -144,6 +144,8 @@ describe "query server normal case" do
   it "should reset" do
     @qs.run(["reset"]).should == true
   end
+
+  
   it "should not erase ddocs on reset" do
     @fun = functions["show-simple"]
     @ddoc = make_ddoc(["shows","simple"], @fun)

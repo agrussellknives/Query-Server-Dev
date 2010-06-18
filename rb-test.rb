@@ -1,6 +1,6 @@
 LANGUAGE = {
   :name => "ruby",
-  :command => "/opt/local/lib/ruby/gems/1.9.1/gems/couchdb-ruby-0.8.0/bin/couchdb_view_server",
+  :command => "/opt/local/lib/ruby/gems/1.9.1/gems/couchdb-ruby-0.8.0/bin/couchdb_pipe_server",
   :functions => {
     "emit-twice" => <<-RUBY,
       lambda{|doc|
@@ -53,7 +53,7 @@ LANGUAGE = {
           lambda { |head,req|
             start({headers:{"Content-Type"=>"text/plain"}})
             send "first chunk";
-            send "second \"chunk\"";
+            send 'second "chunk"';
             return "tail";
           }
       RUBY
