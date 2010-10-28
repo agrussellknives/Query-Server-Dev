@@ -2,7 +2,12 @@ LANGUAGE = {
   :name => "javascript",
   :command => "/opt/local/bin/couchjs /opt/local/share/couchdb/server/main.js",
   :functions => {
-    "emit-twice" => %{function(doc){emit("foo",doc.a); emit("bar",doc.a)}},
+    "emit-twice" => %{function(doc){emit("foo",doc.a); emit("bar",doc.a); return 1;}},
+    "error-in-map" => <<-JS,
+      function(doc) {
+       emit(x,doc)
+      }
+      JS
     "emit-once" => 
       <<-JS,
           function(doc){
@@ -18,6 +23,12 @@ LANGUAGE = {
               throw({forbidden:"bad doc"}); "foo bar";
           }
        JS
+    "show-error" =>
+      <<-JS,
+          function(doc,req) {
+            return {
+          }
+      JS
     "show-simple" => 
       <<-JS,
           function(doc, req) {

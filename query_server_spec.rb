@@ -135,7 +135,7 @@ functions = LANGUAGE[:functions]
 
 describe "query server normal case" do
   before(:all) do
-    `cd #{COUCH_ROOT}`
+    #`cd #{COUCH_ROOT}`
     @qs = QueryServerRunner.run
   end
   after(:all) do
@@ -166,6 +166,16 @@ describe "query server normal case" do
     rows[0][1].should == ["bar", "b"]
     rows[1][0].should == ["baz", "b"]
   end
+  
+  it "should return empty if map terminates abnormally" do
+    @qs.reset!
+    @qs.run(["add_fun", functions["error-in-map"]]).should == true
+    @qs.run(["add_fun", functions["emit-once"]]).should == true
+    rows = @qs.run(["map_doc", {:a => "b"}])
+    rows[0].should == []
+    rows[1].should == [["baz","b"]]
+  end
+  
   describe "reduce" do
     before(:all) do
       @fun = functions["reduce-values-length"]
@@ -229,6 +239,21 @@ describe "query server normal case" do
         ["shows","simple"], 
         [{:title => "Best ever", :body => "Doc body"}, {}]).should ==
       ["resp", {"body" => "Best ever - Doc body"}]
+    end
+  end
+  
+  describe "show with errors" do
+    before(:all) do
+      @fun = functions["show-error"]
+      @ddoc = make_ddoc(["shows","error"], @fun)
+      @qs.teach_ddoc(@ddoc)
+    end
+    it "should return the error" do
+      resp = @qs.ddoc_run(@ddoc,
+        ["shows","error"],
+        [{:title => "Best ever", :body => "Doc Body"}, {}])
+        resp[0].should == "error"
+        resp[1].should == "compilation_error"
     end
   end
 
@@ -428,7 +453,7 @@ describe "query server that exits" do
   after(:each) do
     @qs.close
   end
-
+  
   describe "only goes to 2 list" do
     it "should exit if erlang sends too many rows" do
       @qs.ddoc_run(@ddoc, ["lists","capped"],

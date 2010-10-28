@@ -1,11 +1,21 @@
 LANGUAGE = {
   :name => "ruby",
-  :command => "/opt/local/lib/ruby/gems/1.9.1/gems/couchdb-ruby-0.8.0/bin/couchdb_pipe_server",
+  :command => "/Users/stephenprater/Sites/couchtest/couchdb-ruby-sectional/couchdb-ruby-query-server/bin/couchdb_view_server -dus",
   :functions => {
     "emit-twice" => <<-RUBY,
       lambda{|doc|
         emit "foo",doc['a']
         emit "bar",doc['a']
+        1       
+      }
+      RUBY
+    "error-in-map" => <<-RUBY,
+      lambda{|doc|
+        x = 5
+        5.downto 0 do |i|
+          # will cause division by zero error on last iteration
+          5 / i
+        end
       }
       RUBY
     "emit-once" =>
@@ -34,6 +44,12 @@ LANGUAGE = {
             end
           }
        RUBY
+    "show-error" =>
+      <<-RUBY,
+        lambda { |doc,req|
+          return {
+        }
+      RUBY
     "show-simple" => 
       <<-RUBY,
           lambda { |doc,req|
