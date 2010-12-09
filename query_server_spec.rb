@@ -21,7 +21,6 @@
 # 
 puts "Running query server specs for #{LANGUAGE[:name]} query server"
 
-require 'spec'
 require 'json'
 
 class OSProcessRunner

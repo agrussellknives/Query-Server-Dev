@@ -111,11 +111,11 @@ LANGUAGE = {
     "list-chunky" =>
       <<-RUBY,
           lambda { |head,req|
-            send "first chunk"
-            send req['q']
+            send("first chunk")
+            send(req['q'])
             i = 0;
             while(row = get_row) do
-              send row['key']
+              send(row['key'])
               i += 1
               if (i > 2) then
                 return 'early tail'
